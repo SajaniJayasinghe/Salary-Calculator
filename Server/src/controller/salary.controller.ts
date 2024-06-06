@@ -78,4 +78,31 @@ const getSalary = async (req: Request, res: Response) => {
   }
 };
 
-export { createSalary, getSalary };
+// Delete Earning or Deduction
+const deleteEarningOrDeduction = async (req: Request, res: Response) => {
+  try {
+    const { id, type, itemId } = req.body;
+    let salary = await SalaryCalculator.findById(id);
+
+    if (!salary) {
+      throw new NotFoundError("Salary not found");
+    }
+
+    if (type === "earning") {
+      salary.earnings.remove(itemId);
+    } else if (type === "deduction") {
+      salary.deductions.remove(itemId);
+    } else {
+      throw new BadRequestError(
+        "Invalid type. Must be 'earning' or 'deduction'"
+      );
+    }
+
+    await salary.save();
+    res.status(200).json(salary);
+  } catch (err) {
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export { createSalary, getSalary, deleteEarningOrDeduction };
