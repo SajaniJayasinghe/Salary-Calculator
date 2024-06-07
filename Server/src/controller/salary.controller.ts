@@ -15,7 +15,8 @@ const createSalary = async (req: Request, res: Response) => {
     });
 
     await salary.save();
-    res.status(200).json({ salary });
+    // Send the ID and data of the newly created salary in the response
+    res.status(200).json({ id: salary._id, salary });
   } catch (error) {
     res.status(500).json({ message: "Internal Server Error" });
   }
